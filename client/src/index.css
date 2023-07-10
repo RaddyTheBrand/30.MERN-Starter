@@ -117,7 +117,7 @@ ul.books {
 }
 
 ul.books li {
-  flex: 1 0 21%; /* explanation below */
+  flex: 1 0 21%;
 }
 
 ul.books li a {
