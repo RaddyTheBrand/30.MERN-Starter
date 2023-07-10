@@ -14,6 +14,7 @@ app.use(express.urlencoded( { extended: true } ));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// Get All Books
 app.get("/api/books", async (req, res) => {
   try {
     const category = req.query.category;
@@ -25,18 +26,28 @@ app.get("/api/books", async (req, res) => {
     }
 
     const data = await Book.find(filter);
-    res.json(data);
+    
+    if (!data) {
+      throw new Error("An error occurred while fetching books.");
+    }
+    
+    res.status(201).json(data);
   } catch (error) {
     res.status(500).json({ error: "An error occurred while fetching books." });
   }
 });
 
-
+// Get A Single Books
 app.get("/api/books/:slug", async (req, res) => {
   try {
     const slugParam = req.params.slug;
     const data = await Book.findOne({ slug: slugParam});
-    res.json(data);
+
+    if (!data) {
+      throw new Error("An error occurred while fetching a book.");
+    }
+    
+    res.status(201).json(data);
   } catch (error) {
     res.status(500).json({ error: "An error occurred while fetching books." });
   }
@@ -44,8 +55,7 @@ app.get("/api/books/:slug", async (req, res) => {
 
 
 
-
-
+// Create A Book
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/')
@@ -79,9 +89,7 @@ app.post("/api/books", upload.single("thumbnail")  ,async (req, res) => {
   }
 });
 
-
-
-
+// Update A Book
 app.put("/api/books", upload.single("thumbnail"), async (req, res) => {
   try {
 
@@ -119,8 +127,6 @@ app.delete("/api/books/:id", async(req,res) => {
 });
 
 
-
-
 // app.post("/api/books", async (req, res) => {
 //   try {
 //     console.log(req.body);
@@ -140,27 +146,6 @@ app.delete("/api/books/:id", async(req,res) => {
 //     res.status(500).json({ error: "An error occurred while fetching books." });
 //   }
 // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.get("/", (req, res) => {
   res.json("Hello mate!");
